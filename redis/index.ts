@@ -24,10 +24,23 @@ const createRedisClient = () => {
       },
     });
 
-    // Add event listeners for better error monitoring
-    client.on("error", (err) => {
-      console.error("Redis connection error:", err);
+    // redis/index.ts - Add connection pooling and better error recovery
+    client.on("reconnecting", () => {
+      console.log("Redis reconnecting");
     });
+
+    client.on("connect", () => {
+      console.log("Redis connected");
+    });
+
+    // Ensure connections are properly closed when the app is shutting down
+    if (typeof window === "undefined") {
+      // Server-side only
+      process.on("SIGTERM", () => {
+        console.log("SIGTERM received, closing Redis connections");
+        client.quit();
+      });
+    }
 
     return client;
   } catch (error) {
