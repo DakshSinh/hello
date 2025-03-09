@@ -16,8 +16,6 @@ export const session = sqliteTable("session", {
   token: text("token").notNull().unique(),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
-  ipAddress: text("ip_address"),
-  userAgent: text("user_agent"),
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
@@ -40,7 +38,6 @@ export const account = sqliteTable("account", {
     mode: "timestamp",
   }),
   scope: text("scope"),
-  password: text("password"),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });

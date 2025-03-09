@@ -41,13 +41,12 @@ export const auth = betterAuth({
     },
   },
   session: {
-    expiresIn: 60 * 60 * 24 * 30, // 30 days
-    updateAge: 60 * 60 * 24 * 7, // 7 days
-    // To disable refresh tokens, set this to 0
-    freshAge: 60 * 60 * 24 * 30, // 30 days
+    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    updateAge: 60 * 60 * 24 * 3, // 3 days
+    freshAge: 60 * 60 * 24 * 5, // 5 days
     cookieCache: {
       enabled: true,
-      maxAge: 60 * 60 * 24 * 30, // 30 days
+      maxAge: 60 * 60 * 24 * 7, // 7 days
     },
   },
   rateLimit: {
