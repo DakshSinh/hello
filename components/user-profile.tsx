@@ -5,7 +5,7 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
-export function UserProfileSection() {
+export function UserProfile() {
   const { profile, loading, error, refreshProfile } = useUserProfile();
   const [isRefreshing, setIsRefreshing] = useState(false);
 

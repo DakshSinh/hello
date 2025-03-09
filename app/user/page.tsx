@@ -1,7 +1,5 @@
-import { UserProfileSection } from "@/components/user-profile";
+import { UserProfile } from "@/components/user-profile";
 
-const UserPage = () => {
-  return <UserProfileSection />;
-};
-
-export default UserPage;
+export default function UserPage() {
+  return <UserProfile />;
+}
