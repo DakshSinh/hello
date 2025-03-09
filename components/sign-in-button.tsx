@@ -13,11 +13,23 @@ export async function SignInButton() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
+
+  if (session?.session) {
+    // If user is already signed in, show a dashboard link instead
+    return (
+      <Link href="/dashboard">
+        <button className="cursor-pointer">Dashboard</button>
+      </Link>
+    );
+  }
+
+  // Extract callback URL from the current URL if it exists
+  const url = new URL((await headers()).get("x-url") || "http://localhost");
+  const callbackUrl = url.searchParams.get("callbackUrl") || "/dashboard";
+
   return (
-    <Link href={session?.session ? "/" : "/sign-in"}>
-      <button className="cursor-pointer">
-        {session?.session ? "Home" : "Sign In"}
-      </button>
+    <Link href="/sign-in">
+      <button className="cursor-pointer">Sign In</button>
     </Link>
   );
 }
@@ -25,9 +37,9 @@ export async function SignInButton() {
 export async function SignInFallback() {
   const guessIsSignIn = checkOptimisticSession(await headers());
   return (
-    <Link href={guessIsSignIn ? "/" : "/sign-in"}>
+    <Link href={guessIsSignIn ? "/dashboard" : "/sign-in"}>
       <button className="cursor-pointer">
-        {guessIsSignIn ? "Home" : "Sign In"}
+        {guessIsSignIn ? "Dashboard" : "Sign In"}
       </button>
     </Link>
   );
