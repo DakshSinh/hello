@@ -24,9 +24,6 @@ export async function SignInButton() {
   }
 
   // Extract callback URL from the current URL if it exists
-  const url = new URL((await headers()).get("x-url") || "http://localhost");
-  const callbackUrl = url.searchParams.get("callbackUrl") || "/dashboard";
-
   return (
     <Link href="/sign-in">
       <button className="cursor-pointer">Sign In</button>

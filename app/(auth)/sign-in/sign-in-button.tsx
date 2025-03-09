@@ -2,7 +2,7 @@
 
 import { authClient } from "@/auth/auth-client";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 
 const googleIcon = (
   <svg
@@ -32,31 +32,36 @@ const googleIcon = (
   </svg>
 );
 
-export default function SignInButton() {
+function SearchParamsWrapper(): string {
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+  return searchParams.get("callbackUrl") || "/dashboard"; // Return as string
+}
+
+export default function SignInButton() {
   const [loading, setLoading] = useState(false);
 
   return (
-    <button
-      className="cursor-pointer px-4 py-2 flex items-center gap-2 rounded-lg"
-      onClick={async () => {
-        setLoading(true);
-        await authClient.signIn.social({
-          provider: "google",
-          callbackURL: callbackUrl,
-          //TODO: Add a new user callback URL
-          newUserCallbackURL: "/dashboard",
-        });
-        setLoading(false);
-      }}
-      disabled={loading}
-    >
-      {loading ? (
-        <div className="animate-spin">{googleIcon}</div>
-      ) : (
-        <>{googleIcon}</>
-      )}
-    </button>
+    <Suspense fallback={<div>Loading...</div>}>
+      <button
+        className="cursor-pointer px-4 py-2 flex items-center gap-2 rounded-lg"
+        onClick={async () => {
+          setLoading(true);
+          const callbackUrl = SearchParamsWrapper(); // Get the callback URL as string
+          await authClient.signIn.social({
+            provider: "google",
+            callbackURL: callbackUrl,
+            newUserCallbackURL: "/dashboard",
+          });
+          setLoading(false);
+        }}
+        disabled={loading}
+      >
+        {loading ? (
+          <div className="animate-spin">{googleIcon}</div>
+        ) : (
+          <>{googleIcon}</>
+        )}
+      </button>
+    </Suspense>
   );
 }

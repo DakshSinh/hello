@@ -1,15 +1,20 @@
 "use client";
 
 import SignInButton from "./sign-in-button";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { authClient } from "@/auth/auth-client";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SignInPage() {
-  const router = useRouter();
+function SearchParamsWrapper() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+  return callbackUrl;
+}
+
+export default function SignInPage() {
+  const router = useRouter();
   const [checkingSession, setCheckingSession] = useState(true);
+  const [callbackUrl] = useState("/dashboard");
 
   useEffect(() => {
     async function checkSession() {
@@ -30,11 +35,16 @@ export default function SignInPage() {
 
   if (checkingSession) {
     return (
-      <div className="flex justify-center items-center min-h-[200px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-2xl">Checking session...</p>
       </div>
     );
   }
 
-  return <SignInButton />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SearchParamsWrapper />
+      <SignInButton />
+    </Suspense>
+  );
 }
