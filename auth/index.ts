@@ -7,21 +7,19 @@ import { redis } from "@/redis";
 
 export const auth = betterAuth({
   appName: process.env.APP_NAME! || "QR Menu",
-  advanced: {
-    process.env.NODE_ENV === 'production',
-  },
   database: drizzleAdapter(db, {
     provider: "sqlite",
     schema: {
       ...schema,
     },
   }),
+  rateLimit: {
     window: 60, // 1 minute
-    max: 10 // 10 requests
+    max: 10, // 10 requests
   },
   secondaryStorage: {
     get: async (key) => {
-      const value = await redis.get(key);
+      const value = await redis!.get(key);
       // Simply return the value as is - it's already a string from Redis
       return value;
     },
@@ -29,11 +27,11 @@ export const auth = betterAuth({
       // Ensure value is stringified if it's not already a string
       const stringValue =
         typeof value === "string" ? value : JSON.stringify(value);
-      if (ttl) await redis.set(key, stringValue, "EX", ttl);
-      else await redis.set(key, stringValue);
+      if (ttl) await redis!.set(key, stringValue, "EX", ttl);
+      else await redis!.set(key, stringValue);
     },
     delete: async (key) => {
-      await redis.del(key);
+      await redis!.del(key);
     },
   },
   socialProviders: {
@@ -51,14 +49,6 @@ export const auth = betterAuth({
       enabled: true,
       maxAge: 60 * 60 * 24 * 7, // 7 days
     },
-    // Add this for better security
-    cookie: {
-      path: '/',
-      sameSite: 'lax',
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-    },
   },
-
   plugins: [nextCookies()],
 });
