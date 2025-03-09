@@ -16,9 +16,9 @@ export const auth = betterAuth({
       ...schema,
     },
   }),
-  window: 60, // 1 minute
-  max: process.env.NODE_ENV === 'production' ? 10 : 1000, // More permissive in dev
-},
+    window: 60, // 1 minute
+    max: 10 // 10 requests
+  },
   secondaryStorage: {
     get: async (key) => {
       const value = await redis.get(key);
@@ -59,5 +59,6 @@ export const auth = betterAuth({
       secure: process.env.NODE_ENV === 'production',
     },
   },
+
   plugins: [nextCookies()],
 });
